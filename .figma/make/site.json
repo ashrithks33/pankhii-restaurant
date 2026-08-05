@@ -1,0 +1,10 @@
+{
+  "description": "Showcases a luxury vegetarian fine-dining restaurant with an elegant, modern landing page that highlights premium ambiance and cuisine.",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
