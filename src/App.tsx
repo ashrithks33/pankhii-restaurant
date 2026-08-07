@@ -4,19 +4,26 @@ import logoImg from '@/imports/Screenshot_2026-08-05_092225.png'
 
 // ── Brand tokens ──────────────────────────────────────────────
 const B = {
-  cream:       '#FDF6E3',
-  creamWarm:   '#F7E0A3',
-  creamDeep:   '#F0D080',
-  yellow:      '#F5C842',
-  brown:       '#5A3324',
-  brownLight:  '#7A4A34',
-  brownMuted:  'rgba(90,51,36,0.5)',
-  teal:        '#28C7D8',
-  tealPale:    'rgba(40,199,216,0.14)',
-  green:       '#8BC34A',
-  greenDark:   '#6A9E32',
-  orange:      '#E8834A',
-  white:       '#ffffff',
+  cream: '#FFF9F2',
+  creamWarm: '#F8EEDB',
+
+  green: '#0F3D2E',
+  greenLight: '#1C5C46',
+
+  gold: '#D4AF37',
+  goldSoft: '#E6C76A',
+
+  brown: '#4E342E',
+  brownLight: '#7A5C4F',
+  brownMuted: 'rgba(78,52,46,0.6)',
+
+  white: '#FFFFFF',
+
+  teal: '#28C7D8',
+  tealPale: 'rgba(40,199,216,0.12)',
+
+  yellow: '#F5C842',
+  orange: '#E8834A',
 }
 
 const display = "'Nunito', system-ui, sans-serif"
@@ -252,7 +259,7 @@ function Hero() {
             position: 'relative',
           }}>
             <img
-              src="https://images.unsplash.com/photo-1728910156510-77488f19b152?w=900&h=1125&fit=crop&auto=format"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEcb__3kpNFOeePBXP41YxDLeEd6cgMMxVzATgR8LssQ&s=10"
               alt="Colourful vegetarian spread at Pankhii"
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
@@ -370,7 +377,7 @@ function AboutSection() {
         <div style={{ position: 'relative' }}>
           <div style={{ borderRadius: '28px', overflow: 'hidden', aspectRatio: '3/4', background: B.creamWarm, boxShadow: '0 24px 64px rgba(90,51,36,0.14)' }}>
             <img
-              src="https://images.unsplash.com/photo-1682862279256-b2a9e4f3d22c?w=700&h=933&fit=crop&auto=format"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTX9jddpZzipO4t9ixDh_IIbMSogmVLm3nCu_tHXApFQ&s=10"
               alt="Pankhii kitchen preparation"
               style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.6s', display: 'block' }}
               onMouseEnter={e => { (e.currentTarget as HTMLImageElement).style.transform = 'scale(1.04)' }}
@@ -513,7 +520,7 @@ function MenuCard({ name, desc, price }: { name: string; desc: string; price: st
       </div>
       <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownMuted, lineHeight: 1.65 }}>{desc}</p>
       <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
-        <Pill bg={`rgba(139,195,74,0.15)`} color={B.greenDark}>🌿 Pure Veg</Pill>
+        <Pill bg={`rgba(139,195,74,0.15)`} color={B.green}>🌿 Pure Veg</Pill>
       </div>
     </div>
   )
@@ -598,7 +605,7 @@ function ExperienceSection() {
             ))}
           </div>
 
-          <div style={{ borderRadius: '24px', overflow: 'hidden', aspectRatio: '4/3', background: B.creamDeep, boxShadow: '0 24px 64px rgba(90,51,36,0.15)' }}>
+          <div style={{ borderRadius: '24px', overflow: 'hidden', aspectRatio: '4/3', background: B.creamWarm, boxShadow: '0 24px 64px rgba(90,51,36,0.15)' }}>
             <img src={EXPERIENCES[active].img} alt={EXPERIENCES[active].title} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'opacity 0.4s' }} />
           </div>
         </div>
@@ -687,10 +694,17 @@ function ReservationSection() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {[
-              { emoji: '📍', label: 'Address', value: '14 Juhu Beach Road, Juhu, Mumbai 400 049' },
-              { emoji: '📞', label: 'Telephone', value: '+91 22 2660 4800' },
-              { emoji: '✉️', label: 'Email', value: 'hello@pankhii.in' },
-            ].map(({ emoji, label, value }) => (
+  {
+    emoji: '📍',
+    label: 'Address',
+    value: '1st Floor 877/4a, Vani Villas Road Near RTO Circle, Lakshmipuram, Mysuru 570004'
+  },
+  {
+    emoji: '📞',
+    label: 'Telephone',
+    value: '+91 80958 09571'
+  },
+].map(({ emoji, label, value }) => (
               <div key={label} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '16px 20px', background: B.white, borderRadius: '16px', boxShadow: '0 2px 12px rgba(90,51,36,0.07)' }}>
                 <span style={{ fontSize: '22px', flexShrink: 0 }}>{emoji}</span>
                 <div>
