@@ -69,7 +69,9 @@ export default function Reservation() {
                 <div style={{ minWidth: '4px', borderLeft: `4px solid ${B.teal}`, paddingLeft: '12px' }} />
                 <div>
                   <p style={{ fontFamily: display, fontWeight: 700, fontSize: '11px', color: B.teal, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '6px' }}>{item.title}</p>
-                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownLight, margin: 0 }}>{item.value}</p>
+                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownLight, margin: 0 }}>
+                    {item.title === 'TELEPHONE' ? <a href="tel:+918095809571" style={{ color: 'inherit', textDecoration: 'none' }}>{item.value}</a> : item.value}
+                  </p>
                 </div>
               </div>
             ))}
@@ -104,7 +106,7 @@ export default function Reservation() {
                 <div>
                   <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownLight, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Guests</label>
                   <select style={{ ...inputSt, cursor: 'pointer' }} value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} onFocus={e => { e.currentTarget.style.borderColor = B.teal }} onBlur={e => { e.currentTarget.style.borderColor = 'rgba(78,52,46,0.18)' }}>
-                    {[1,2,3,4,5,6,7,8].map(n => <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>)}
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>)}
                   </select>
                 </div>
               </div>

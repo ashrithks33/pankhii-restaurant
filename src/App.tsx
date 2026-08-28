@@ -1,5 +1,5 @@
-import heroImage from '@/imports/hero.jpg'
 import Navbar from "./components/Navbar";
+import Contact from "./components/Contact";
 import { useState, useEffect, useRef, type ReactNode } from 'react'
 import logoImg from '@/imports/Screenshot_2026-08-05_092225.png'
 import dish1 from '@/food-images/dish1.png'
@@ -309,7 +309,6 @@ function BirdDeco({ size = 40, opacity = 0.08, color = B.brown }: { size?: numbe
 function Hero() {
   const [menuHov, setMenuHov] = useState(false)
   const [reserveHov, setReserveHov] = useState(false)
-  const heroImage = "https://lh3.googleusercontent.com/gps-cs-s/AHRPTWkwWnTKumUNfVecCzzNQChUxgcu-ZY4hX7gSeNG6hagwqS5bJ0VSTMb7cG3XcS-ltFugPb4I2KXgwsxlLCQCUu5ZTJESP6Jjnjc1-4NTP6AFdQqTyi7BqBcqxgM8JhGKzouYFtzZ5P4FECL=s0"
 
   return (
     <section
@@ -347,9 +346,9 @@ function Hero() {
         .hero-meta-item p:last-child { font-family: ${sans}; font-weight: 400; font-size: 0.82rem; color: ${B.brownMuted}; text-transform: uppercase; letter-spacing: 0.16em; margin: 0; }
         .hero-visual { position:relative; display:flex; align-items:center; justify-content:center; animation: fadeInUp 0.9s ease 0.2s both; }
         .hero-ring { position:absolute; inset: 16px; border-radius: 42px; border: 2px dashed rgba(40,199,216,0.22); pointer-events:none; }
-        .hero-image-card { width: 100%; max-width: 720px; aspect-ratio: 4/5; border-radius: 36px; overflow:hidden; background: ${B.creamWarm}; box-shadow: 0 32px 96px rgba(78,52,46,0.18), 0 14px 36px rgba(78,52,46,0.12); position:relative; transition: transform 0.35s ease, box-shadow 0.35s ease; }
-        .hero-image-card:hover { transform: translateY(-6px); box-shadow: 0 44px 104px rgba(78,52,46,0.22), 0 18px 42px rgba(78,52,46,0.14); }
-        .hero-image-card img { width: 100%; height: 100%; object-fit: cover; object-position: center; display:block; }
+        .hero-image-card { width: 100%; max-width: 720px; aspect-ratio: 4/5; border-radius: 36px; overflow:hidden; background: ${B.creamWarm}; box-shadow: 0 32px 96px rgba(78,52,46,0.18), 0 14px 36px rgba(78,52,46,0.12); position:relative; transition: transform 0.35s ease, box-shadow 0.35s ease; will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: translateZ(0); }
+        .hero-image-card:hover { transform: translateY(-6px) translateZ(0); box-shadow: 0 44px 104px rgba(78,52,46,0.22), 0 18px 42px rgba(78,52,46,0.14); }
+        .hero-image-card img { width: 100%; height: 100%; object-fit: cover; object-position: center; display:block; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality; -ms-interpolation-mode: bicubic; }
         .hero-overlay { position:absolute; bottom:0; left:0; right:0; height:46%; background: linear-gradient(to top, rgba(78,52,46,0.78) 0%, transparent 100%); }
         .hero-caption { position:absolute; bottom:28px; left:28px; right:28px; display:flex; flex-direction: column; gap: 4px; }
         .hero-caption p:first-child { font-family: ${display}; font-weight: 800; font-size: 1.05rem; color: ${B.white}; margin:0; }
@@ -453,7 +452,7 @@ function Hero() {
         <div className="hero-visual">
           <div className="hero-ring" />
           <div className="hero-image-card">
-            <img src={heroImage} alt="Warm family dining together over vegetarian dishes" />
+            <img src={restaurant4} alt="Warm family dining together over vegetarian dishes" />
             <div className="hero-overlay" />
             <div className="hero-caption">
               <p>Chef-curated seasonal feast</p>
@@ -691,7 +690,7 @@ function MenuCard({ name, desc, price, isJain = false }: { name: string; desc: s
         <div style={{ flex: 1, minWidth: 0 }}>
           <h3 style={{ fontFamily: display, fontWeight: 800, fontSize: '18px', color: B.brown, lineHeight: 1.25, margin: 0, minWidth: 0, overflowWrap: 'break-word', wordBreak: 'normal' }}>{name}</h3>
         </div>
-        <span style={{ fontFamily: display, fontWeight: 900, fontSize: '18px', color: B.teal, whiteSpace: 'nowrap', flexShrink: 0, marginLeft: '8px' }}>{price}</span>
+        <span style={{ fontFamily: display, fontWeight: 800, fontSize: '15px', color: B.teal, whiteSpace: 'pre-line', flexShrink: 0, marginLeft: '8px', maxWidth: '130px', textAlign: 'right', lineHeight: 1.4 }}>{price}</span>
       </div>
       <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownMuted, lineHeight: 1.65, margin: 0, width: '100%', minWidth: 0, overflowWrap: 'break-word', wordBreak: 'normal' }}>{desc}</p>
       <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -791,7 +790,7 @@ function GallerySection() {
             aria-label="Previous dishes"
             onClick={goPrev}
             style={{
-              position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)',
+              position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', zIndex: 30,
               width: '58px', height: '58px', borderRadius: '50%',
               border: '1px solid rgba(78,52,46,0.15)', background: B.white, color: B.brown,
               boxShadow: '0 16px 34px rgba(90,51,36,0.08)', cursor: 'pointer',
@@ -856,7 +855,7 @@ function GallerySection() {
             aria-label="Next dishes"
             onClick={goNext}
             style={{
-              position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)',
+              position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', zIndex: 30,
               width: '58px', height: '58px', borderRadius: '50%',
               border: '1px solid rgba(78,52,46,0.15)', background: B.white, color: B.brown,
               boxShadow: '0 16px 34px rgba(90,51,36,0.08)', cursor: 'pointer',
@@ -1166,7 +1165,9 @@ function ReservationSection() {
                 <span style={{ fontSize: '22px', flexShrink: 0 }}>{emoji}</span>
                 <div>
                   <p style={{ fontFamily: display, fontWeight: 700, fontSize: '11px', color: B.teal, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '3px' }}>{label}</p>
-                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownLight }}>{value}</p>
+                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownLight }}>
+                    {label === 'Telephone' ? <a href="tel:+918095809571" style={{ color: 'inherit', textDecoration: 'none' }}>{value}</a> : value}
+                  </p>
                 </div>
               </div>
             ))}
@@ -1227,6 +1228,188 @@ function ReservationSection() {
               <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: B.brownMuted, textAlign: 'center', marginTop: '12px' }}>No payment required · Confirmed within 2 hours</p>
             </form>
           )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ── Location / Find Us ────────────────────────────────────────
+function LocationSection() {
+  return (
+    <section
+      id="location"
+      style={{
+        background: `linear-gradient(180deg, ${B.cream} 0%, ${B.creamWarm} 100%)`,
+        padding: '120px 0',
+        position: 'relative',
+        overflow: 'hidden',
+      }}
+    >
+      <style>{`
+        /* ── loc-* classes are fully isolated and do not affect any other section ── */
+        .loc-container {
+          max-width: 1440px;
+          margin: 0 auto;
+          padding: 0 64px;
+        }
+        .loc-header {
+          text-align: center;
+          margin-bottom: 56px;
+        }
+        .loc-tag {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 16px;
+        }
+        .loc-tag-dot {
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          background: ${B.gold};
+        }
+        .loc-tag-text {
+          font-family: ${display};
+          font-weight: 700;
+          font-size: 13px;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          color: ${B.gold};
+        }
+        .loc-heading {
+          font-family: ${display};
+          font-weight: 900;
+          font-size: 52px;
+          color: ${B.brown};
+          margin: 0 0 12px;
+          line-height: 1.1;
+        }
+        .loc-heading span {
+          color: ${B.teal};
+        }
+        .loc-subtitle {
+          font-family: ${sans};
+          font-weight: 400;
+          font-size: 16px;
+          color: ${B.brownLight};
+          margin: 0;
+        }
+        .loc-map-wrapper {
+          border-radius: 28px;
+          overflow: hidden;
+          box-shadow: 0 32px 80px rgba(78,52,46,0.18), 0 12px 32px rgba(78,52,46,0.1);
+          border: 1px solid rgba(78,52,46,0.08);
+          position: relative;
+          width: 100%;
+          aspect-ratio: 16 / 7;
+          background: ${B.creamWarm};
+        }
+        .loc-map-wrapper iframe {
+          width: 100%;
+          height: 100%;
+          border: none;
+          display: block;
+        }
+        .loc-open-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 10px;
+          margin-top: 28px;
+          padding: 14px 32px;
+          border-radius: 999px;
+          font-family: ${display};
+          font-weight: 800;
+          font-size: 14px;
+          letter-spacing: 0.06em;
+          background: ${B.teal};
+          color: ${B.white};
+          text-decoration: none;
+          box-shadow: 0 8px 28px rgba(40,199,216,0.32);
+          transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .loc-open-link:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 14px 38px rgba(40,199,216,0.44);
+        }
+        .loc-footer-row {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 16px;
+          margin-top: 32px;
+          flex-wrap: wrap;
+        }
+        .loc-address-chip {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 20px;
+          background: ${B.white};
+          border-radius: 999px;
+          border: 1px solid rgba(78,52,46,0.1);
+          box-shadow: 0 4px 14px rgba(78,52,46,0.07);
+          font-family: ${sans};
+          font-weight: 400;
+          font-size: 14px;
+          color: ${B.brownLight};
+        }
+        @media (max-width: 760px) {
+          .loc-container { padding: 0 24px; }
+          .loc-heading { font-size: 36px; }
+          .loc-map-wrapper { aspect-ratio: 4 / 3; border-radius: 20px; }
+          .loc-footer-row { flex-direction: column; gap: 12px; }
+        }
+        @media (max-width: 520px) {
+          .loc-container { padding: 0 16px; }
+          .loc-heading { font-size: 30px; }
+          .loc-map-wrapper { aspect-ratio: 1 / 1; border-radius: 16px; }
+        }
+      `}</style>
+
+      {/* Decorative blobs — isolated, pointer-events none */}
+      <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '340px', height: '340px', borderRadius: '50%', background: `radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 70%)`, pointerEvents: 'none' }} />
+      <div style={{ position: 'absolute', bottom: '-40px', left: '-40px', width: '260px', height: '260px', borderRadius: '50%', background: `radial-gradient(circle, ${B.tealPale} 0%, transparent 70%)`, pointerEvents: 'none' }} />
+
+      <div className="loc-container">
+        {/* Header */}
+        <div className="loc-header">
+          <div className="loc-tag">
+            <div className="loc-tag-dot" />
+            <span className="loc-tag-text">Find Us</span>
+          </div>
+          <h2 className="loc-heading">
+            Locate <span>Pankhii</span>
+          </h2>
+          <p className="loc-subtitle">
+            Pankhii Veg Restaurant · Mysuru, Karnataka
+          </p>
+        </div>
+
+        {/* Map */}
+        <div className="loc-map-wrapper">
+          <iframe
+            title="Pankhii Veg Restaurant location on Google Maps"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3898.1020869597354!2d76.6438459!3d12.2988174!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3baf71007755180d%3A0x5b532179538bb265!2sPankhii%20Veg%20Restaurant%20%7C%20Mysuru!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          />
+        </div>
+
+        {/* Footer row — address chip + open-in-maps link */}
+        <div className="loc-footer-row">
+          <span className="loc-address-chip">
+            📍 1st Floor 877/4a, Vani Villas Road, Lakshmipuram, Mysuru 570004
+          </span>
+          <a
+            href="https://www.google.com/maps/place/Pankhii+Veg+Restaurant+%7C+Mysuru/@12.2988174,76.6438459,17z"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="loc-open-link"
+          >
+            🗺️ Open in Google Maps
+          </a>
         </div>
       </div>
     </section>
@@ -1295,6 +1478,9 @@ function Footer() {
             ))}
           </div>
         </div>
+
+
+
       </div>
     </footer>
   )
@@ -1572,6 +1758,8 @@ export default function App() {
       <ExperienceSection />
       <TestimonialsSection />
       <ReservationSection />
+      <LocationSection />
+      <Contact />
       <Footer />
     </div>
   )
