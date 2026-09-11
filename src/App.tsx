@@ -1,6 +1,6 @@
 import Navbar from "./components/Navbar";
 import Contact from "./components/Contact";
-import { useState, useEffect, useRef, type ReactNode } from 'react'
+import { useState, useEffect, useRef, createContext, useContext, type ReactNode } from 'react'
 import logoImg from '@/imports/Screenshot_2026-08-05_092225.png'
 import dish1 from '@/food-images/dish1.png'
 import dish2 from '@/food-images/dish2.png'
@@ -40,7 +40,37 @@ const B = {
   orange: '#E8834A',
 }
 
+// ── Dark brand tokens ─────────────────────────────────────────
+const D = {
+  cream: '#1A1612',
+  creamWarm: '#1F1C18',
+
+  green: '#9BCB65',       // readable muted green on dark backgrounds
+  greenLight: '#7AB84D',  // slightly deeper green, still highly readable
+
+  gold: '#D4AF37',
+  goldSoft: '#E6C76A',
+
+  brown: '#F5EDD8',         // headings → warm cream
+  brownLight: '#C4A882',    // body text
+  brownMuted: 'rgba(220,185,140,0.55)',
+
+  white: '#231F1B',         // card surfaces
+
+  teal: '#28C7D8',
+  tealPale: 'rgba(40,199,216,0.10)',
+
+  yellow: '#F5C842',
+  orange: '#E8834A',
+}
+
+// ── Theme context ──────────────────────────────────────────────
+interface ThemeCtx { isDark: boolean; toggle: () => void }
+export const ThemeContext = createContext<ThemeCtx>({ isDark: false, toggle: () => { } })
+function useTheme() { return useContext(ThemeContext) }
+
 const display = "'Nunito', system-ui, sans-serif"
+const serif = "'Cormorant Garamond', 'Georgia', serif"
 const sans = "'Inter', system-ui, sans-serif"
 
 // ── Nav links ─────────────────────────────────────────────────
@@ -305,8 +335,10 @@ function BirdDeco({ size = 40, opacity = 0.08, color = B.brown }: { size?: numbe
 // ── Nav ───────────────────────────────────────────────────────
 
 
-// ── Hero ──────────────────────────────────────────────────────
+// ── Hero ──────────────────────────────────────────────
 function Hero() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   const [menuHov, setMenuHov] = useState(false)
   const [reserveHov, setReserveHov] = useState(false)
 
@@ -317,7 +349,9 @@ function Hero() {
       style={{
         minHeight: '100vh',
         paddingTop: '76px',
-        background: `linear-gradient(150deg, ${B.creamWarm} 0%, ${B.cream} 48%, rgba(40,199,216,0.08) 100%)`,
+        background: isDark
+          ? `linear-gradient(150deg, #1F1C18 0%, #1A1612 48%, rgba(40,199,216,0.06) 100%)`
+          : `linear-gradient(150deg, ${B.creamWarm} 0%, ${B.cream} 48%, rgba(40,199,216,0.08) 100%)`,
         position: 'relative',
         overflow: 'hidden',
         display: 'flex',
@@ -328,30 +362,30 @@ function Hero() {
         .hero-layout { display:grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr); gap: 72px; align-items: center; min-height: 100vh; padding: 80px 0; }
         .hero-left { padding-top: 24px; animation: fadeInUp 0.9s ease both; }
         .hero-pretitle { margin-bottom: 28px; animation: fadeInUp 0.95s ease both; }
-        .hero-heading { font-family: ${display}; font-weight: 900; font-size: clamp(3rem, 5vw, 5.5rem); line-height: 0.96; color: ${B.brown}; margin: 0 0 32px; letter-spacing: -0.05em; animation: fadeInUp 1s ease 0.1s both; }
-        .hero-heading span { color: ${B.teal}; }
+        .hero-heading { font-family: ${serif}; font-weight: 700; font-size: clamp(3rem, 5vw, 5.5rem); line-height: 0.96; color: ${T.brown}; margin: 0 0 32px; letter-spacing: -0.02em; animation: fadeInUp 1s ease 0.1s both; }
+        .hero-heading span { color: ${T.teal}; }
         .hero-divider { margin-bottom: 32px; opacity: 0.92; animation: fadeInUp 1s ease 0.15s both; }
-        .hero-copy { font-family: ${sans}; font-weight: 400; font-size: clamp(1rem, 1.05vw, 1.2rem); line-height: 1.9; color: ${B.brownLight}; max-width: 580px; margin-bottom: 48px; animation: fadeInUp 1s ease 0.2s both; }
+        .hero-copy { font-family: ${sans}; font-weight: 400; font-size: clamp(1rem, 1.05vw, 1.2rem); line-height: 1.9; color: ${T.brownLight}; max-width: 580px; margin-bottom: 48px; animation: fadeInUp 1s ease 0.2s both; }
         .hero-actions { display:flex; flex-wrap: wrap; gap: 18px; margin-bottom: 48px; animation: fadeInUp 1s ease 0.25s both; }
         .hero-actions a { display: inline-flex; align-items:center; justify-content:center; min-width: 180px; text-decoration:none; padding: 18px 36px; border-radius: 999px; font-family: ${display}; font-weight: 800; font-size: 0.96rem; letter-spacing:0.06em; transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease, color 0.28s ease; position: relative; overflow: hidden; }
-        .hero-actions a.primary { background: ${B.white}; color: ${B.brown}; border: 2px solid ${B.brown}; box-shadow: 0 18px 48px rgba(78,52,46,0.12); }
-        .hero-actions a.primary:hover { transform: translateY(-2px) scale(1.01); background: ${B.brown}; color: ${B.white}; box-shadow: 0 18px 48px rgba(78,52,46,0.22); }
-        .hero-actions a.secondary { background: ${B.teal}; color: ${B.white}; box-shadow: 0 10px 30px rgba(40,199,216,0.28); }
+        .hero-actions a.primary { background: ${isDark ? '#2A2420' : B.white}; color: ${T.brown}; border: 2px solid ${isDark ? 'rgba(245,237,216,0.3)' : B.brown}; box-shadow: ${isDark ? '0 18px 48px rgba(0,0,0,0.3)' : '0 18px 48px rgba(78,52,46,0.12)'}; }
+        .hero-actions a.primary:hover { transform: translateY(-2px) scale(1.01); background: ${isDark ? '#3A322C' : B.brown}; color: ${isDark ? T.brown : B.white}; box-shadow: ${isDark ? '0 18px 48px rgba(0,0,0,0.4)' : '0 18px 48px rgba(78,52,46,0.22)'}; }
+        .hero-actions a.secondary { background: ${T.teal}; color: #FFFFFF; box-shadow: 0 10px 30px rgba(40,199,216,0.28); }
         .hero-actions a.secondary:hover { transform: translateY(-2px) scale(1.01); box-shadow: 0 16px 44px rgba(40,199,216,0.4); }
-        .hero-badge { display: inline-flex; align-items: center; background: ${B.yellow}; border-radius: 24px; padding: 14px 22px; box-shadow: 0 12px 30px rgba(245,200,66,0.4); z-index:2; margin: 4px 0 0; width: fit-content; }
+        .hero-badge { display: inline-flex; align-items: center; background: ${T.yellow}; border-radius: 24px; padding: 14px 22px; box-shadow: 0 12px 30px rgba(245,200,66,0.4); z-index:2; margin: 4px 0 0; width: fit-content; }
         .hero-badge p { font-family: ${display}; font-weight: 900; font-size: 0.86rem; color: ${B.brown}; margin: 0; }
-        .hero-meta { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; width: 100%; margin-top: 44px; padding-top: 36px; border-top: 1px solid rgba(78,52,46,0.12); animation: fadeInUp 1s ease 0.3s both; }
+        .hero-meta { display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; width: 100%; margin-top: 44px; padding-top: 36px; border-top: 1px solid ${isDark ? 'rgba(255,255,255,0.08)' : 'rgba(78,52,46,0.12)'}; animation: fadeInUp 1s ease 0.3s both; }
         .hero-meta-item { min-width: 0; display:flex; flex-direction: column; justify-content:flex-start; align-items:flex-start; }
-        .hero-meta-item p:first-child { font-family: ${display}; font-weight: 900; font-size: 1.9rem; color: ${B.teal}; margin: 0 0 6px; }
-        .hero-meta-item p:last-child { font-family: ${sans}; font-weight: 400; font-size: 0.82rem; color: ${B.brownMuted}; text-transform: uppercase; letter-spacing: 0.16em; margin: 0; }
+        .hero-meta-item p:first-child { font-family: ${display}; font-weight: 900; font-size: 1.9rem; color: ${T.teal}; margin: 0 0 6px; }
+        .hero-meta-item p:last-child { font-family: ${sans}; font-weight: 400; font-size: 0.82rem; color: ${T.brownMuted}; text-transform: uppercase; letter-spacing: 0.16em; margin: 0; }
         .hero-visual { position:relative; display:flex; align-items:center; justify-content:center; animation: fadeInUp 0.9s ease 0.2s both; }
         .hero-ring { position:absolute; inset: 16px; border-radius: 42px; border: 2px dashed rgba(40,199,216,0.22); pointer-events:none; }
-        .hero-image-card { width: 100%; max-width: 720px; aspect-ratio: 4/5; border-radius: 36px; overflow:hidden; background: ${B.creamWarm}; box-shadow: 0 32px 96px rgba(78,52,46,0.18), 0 14px 36px rgba(78,52,46,0.12); position:relative; transition: transform 0.35s ease, box-shadow 0.35s ease; will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: translateZ(0); }
+        .hero-image-card { width: 100%; max-width: 720px; aspect-ratio: 4/5; border-radius: 36px; overflow:hidden; background: ${T.creamWarm}; box-shadow: 0 32px 96px rgba(78,52,46,0.18), 0 14px 36px rgba(78,52,46,0.12); position:relative; transition: transform 0.35s ease, box-shadow 0.35s ease; will-change: transform; backface-visibility: hidden; -webkit-backface-visibility: hidden; transform: translateZ(0); }
         .hero-image-card:hover { transform: translateY(-6px) translateZ(0); box-shadow: 0 44px 104px rgba(78,52,46,0.22), 0 18px 42px rgba(78,52,46,0.14); }
         .hero-image-card img { width: 100%; height: 100%; object-fit: cover; object-position: center; display:block; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: high-quality; -ms-interpolation-mode: bicubic; }
         .hero-overlay { position:absolute; bottom:0; left:0; right:0; height:46%; background: linear-gradient(to top, rgba(78,52,46,0.78) 0%, transparent 100%); }
         .hero-caption { position:absolute; bottom:28px; left:28px; right:28px; display:flex; flex-direction: column; gap: 4px; }
-        .hero-caption p:first-child { font-family: ${display}; font-weight: 800; font-size: 1.05rem; color: ${B.white}; margin:0; }
+        .hero-caption p:first-child { font-family: ${display}; font-weight: 800; font-size: 1.05rem; color: #FFFFFF; margin:0; }
         .hero-caption p:last-child { font-family: ${sans}; font-weight: 400; font-size: 0.82rem; color: rgba(255,255,255,0.88); letter-spacing: 0.12em; text-transform: uppercase; margin:0; }
         @media (max-width: 1120px) {
           .hero-layout { grid-template-columns: 1fr; padding: 64px 40px 72px; }
@@ -381,6 +415,9 @@ function Hero() {
         }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
       `}</style>
+
+      {/* Atmospheric background overlay */}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 0, backgroundImage: `url(${restaurant4})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: isDark ? 0.03 : 0.05, pointerEvents: 'none' }} />
 
       {/* Decorative blobs */}
       <div style={{ position: 'absolute', top: '-80px', right: '-80px', width: '480px', height: '480px', borderRadius: '50%', background: `radial-gradient(circle, ${B.yellow}55 0%, transparent 70%)`, pointerEvents: 'none' }} />
@@ -465,11 +502,12 @@ function Hero() {
   )
 }
 
-// ── Stats ─────────────────────────────────────────────────────
+// ── Stats ─────────────────────────────────────────────
 function StatsSection() {
+  const { isDark } = useTheme()
   return (
     <section id="stats" style={{
-      background: B.brown,
+      background: isDark ? '#12100E' : B.brown,
       position: 'relative', overflow: 'hidden',
     }}>
       {/* Subtle dot pattern */}
@@ -493,6 +531,8 @@ function StatsSection() {
 
 function StatCard({ icon, value, label, sub, isLast }: { icon: string; value: string; label: string; sub: string; isLast: boolean }) {
   const [hov, setHov] = useState(false)
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
 
   return (
     <div
@@ -512,7 +552,7 @@ function StatCard({ icon, value, label, sub, isLast }: { icon: string; value: st
         position: 'absolute', top: 0, left: '36px',
         height: '3px', borderRadius: '2px',
         width: hov ? 'calc(100% - 72px)' : '28px',
-        background: B.teal,
+        background: T.teal,
         transition: 'width 0.4s ease',
       }} />
 
@@ -531,23 +571,26 @@ function StatCard({ icon, value, label, sub, isLast }: { icon: string; value: st
       <p style={{
         fontFamily: display, fontWeight: 900,
         fontSize: value.startsWith('★') ? '20px' : '44px',
-        lineHeight: 1, color: B.creamWarm,
+        lineHeight: 1, color: T.creamWarm,
         marginBottom: '8px',
         letterSpacing: value.startsWith('★') ? '0.1em' : '-0.01em',
       }}>{value}</p>
 
-      <p style={{ fontFamily: display, fontWeight: 700, fontSize: '14px', color: B.white, marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
+      <p style={{ fontFamily: display, fontWeight: 700, fontSize: '14px', color: '#FFFFFF', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</p>
       <p style={{ fontFamily: sans, fontWeight: 300, fontSize: '13px', color: 'rgba(253,246,227,0.6)', lineHeight: 1.5 }}>{sub}</p>
     </div>
   )
 }
 
-// ── About ─────────────────────────────────────────────────────
+// ── About ─────────────────────────────────────────────
 function AboutSection() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   return (
-    <section id="about" style={{ background: B.cream, padding: '72px 0 84px' }}>
+    <section id="about" style={{ background: T.cream, padding: '72px 0 84px', position: 'relative', overflow: 'hidden' }}>
+      {/* Atmospheric background overlay */}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 0, backgroundImage: `url(${restaurant1})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: isDark ? 0.03 : 0.05, pointerEvents: 'none' }} />
       <style>{`
-        .about-grid { align-items: center; }
         .about-copy { display: flex; flex-direction: column; justify-content: center; gap: 16px; }
         .about-copy h2 { margin: 0; }
         .about-copy svg { display: block; margin: 0; }
@@ -569,7 +612,7 @@ function AboutSection() {
 
         {/* Left image mosaic */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-          <div style={{ borderRadius: '28px', overflow: 'hidden', aspectRatio: '3/4', background: B.creamWarm, boxShadow: '0 24px 64px rgba(90,51,36,0.14)' }}>
+          <div style={{ borderRadius: '28px', overflow: 'hidden', aspectRatio: '3/4', background: T.creamWarm, boxShadow: '0 24px 64px rgba(90,51,36,0.14)' }}>
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTX9jddpZzipO4t9ixDh_IIbMSogmVLm3nCu_tHXApFQ&s=10"
               alt="Pankhii kitchen preparation"
@@ -581,33 +624,33 @@ function AboutSection() {
 
           {/* Deco bird */}
           <div style={{ position: 'absolute', top: '20px', left: '-20px', pointerEvents: 'none' }}>
-            <BirdDeco size={72} opacity={0.09} color={B.teal} />
+            <BirdDeco size={72} opacity={0.09} color={T.teal} />
           </div>
         </div>
 
         {/* Right copy */}
         <div className="about-copy">
-          <SectionTag color={B.teal}>Our Story</SectionTag>
-          <h2 style={{ fontFamily: display, fontWeight: 900, fontSize: '52px', lineHeight: 1.1, color: B.brown }}>
-            Born from a<br />love of <span style={{ color: B.teal }}>good food</span><br />& family.
+          <SectionTag color={T.teal}>Our Story</SectionTag>
+          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: '52px', lineHeight: 1.1, color: T.brown }}>
+            Born from a<br />love of <span style={{ color: T.teal }}>good food</span><br />& family.
           </h2>
 
           <svg width="100" height="10" viewBox="0 0 100 10" fill="none" aria-hidden="true">
-            <path d="M0 5 Q12.5 0 25 5 Q37.5 10 50 5 Q62.5 0 75 5 Q87.5 10 100 5" stroke={B.green} strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            <path d="M0 5 Q12.5 0 25 5 Q37.5 10 50 5 Q62.5 0 75 5 Q87.5 10 100 5" stroke={isDark ? T.teal : B.green} strokeWidth="2.5" fill="none" strokeLinecap="round" />
           </svg>
 
-          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', lineHeight: 1.85, color: B.brownLight }}>
+          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', lineHeight: 1.85, color: T.brownLight }}>
             Pankhii — named after the Sanskrit word for "bird" — was founded by the Iyer family in 2009 with a simple belief: vegetarian food can be as joyful, colourful, and soulful as any meal on earth.
           </p>
-          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', lineHeight: 1.85, color: B.brownLight }}>
+          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', lineHeight: 1.85, color: T.brownLight }}>
             We source from 28 family farms across Maharashtra, cook with time-honoured spice traditions, and plate with the care of a gift. Every table is treated like family.
           </p>
 
           <div className="about-stats" style={{ display: 'flex', gap: '32px' }}>
             {[{ v: '28', l: 'Farm Partners' }, { v: '120+', l: 'Seasonal Ingredients' }].map(({ v, l }) => (
-              <div key={l} style={{ padding: '20px 24px', background: B.tealPale, borderRadius: '16px', border: `1px solid rgba(40,199,216,0.2)` }}>
-                <p style={{ fontFamily: display, fontWeight: 900, fontSize: '32px', color: B.teal, lineHeight: 1 }}>{v}</p>
-                <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: B.brownMuted, marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{l}</p>
+              <div key={l} style={{ padding: '20px 24px', background: T.tealPale, borderRadius: '16px', border: `1px solid rgba(40,199,216,0.2)` }}>
+                <p style={{ fontFamily: display, fontWeight: 900, fontSize: '32px', color: T.teal, lineHeight: 1 }}>{v}</p>
+                <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: T.brownMuted, marginTop: '4px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{l}</p>
               </div>
             ))}
           </div>
@@ -617,22 +660,24 @@ function AboutSection() {
   )
 }
 
-// ── Menu ──────────────────────────────────────────────────────
+// ── Menu ─────────────────────────────────────────────
 function MenuSection() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   const [active, setActive] = useState('Starters')
   const current = MENU_ITEMS.find(m => m.category === active)!
 
   return (
-    <section id="menu" style={{ background: `linear-gradient(180deg, ${B.creamWarm} 0%, ${B.cream} 100%)`, padding: '120px 0' }}>
+    <section id="menu" style={{ background: isDark ? `linear-gradient(180deg, #1F1C18 0%, #1A1612 100%)` : `linear-gradient(180deg, ${B.creamWarm} 0%, ${B.cream} 100%)`, padding: '120px 0' }}>
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 64px' }}>
 
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-          <SectionTag color={B.green}>Seasonal Menu</SectionTag>
-          <h2 style={{ fontFamily: display, fontWeight: 900, fontSize: '52px', color: B.brown, marginBottom: '12px' }}>
-            Curated with the <span style={{ color: B.green }}>season</span>.
+          <SectionTag color={isDark ? T.teal : B.green}>Seasonal Menu</SectionTag>
+          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: '52px', color: T.brown, marginBottom: '12px' }}>
+            Curated with the <span style={{ color: isDark ? T.teal : B.green }}>season</span>.
           </h2>
-          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', color: B.brownLight, maxWidth: '480px', margin: '0 auto' }}>
+          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', color: T.brownLight, maxWidth: '480px', margin: '0 auto' }}>
             Our menu honours what the earth offers each week. Fresh, vibrant, and full of flavour.
           </p>
         </div>
@@ -646,8 +691,8 @@ function MenuSection() {
               style={{
                 fontFamily: display, fontWeight: 800, fontSize: '14px',
                 padding: '10px 28px', borderRadius: '999px', border: 'none', cursor: 'pointer',
-                background: active === m.category ? B.teal : B.white,
-                color: active === m.category ? B.white : B.brownLight,
+                background: active === m.category ? T.teal : T.white,
+                color: active === m.category ? '#FFFFFF' : T.brownLight,
                 boxShadow: active === m.category ? '0 6px 20px rgba(40,199,216,0.35)' : '0 2px 8px rgba(90,51,36,0.08)',
                 transition: 'all 0.25s ease',
               }}
@@ -672,15 +717,17 @@ function MenuSection() {
 }
 
 function MenuCard({ name, desc, price, isJain = false }: { name: string; desc: string; price: string; isJain?: boolean }) {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   const [hov, setHov] = useState(false)
   return (
     <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
-        background: B.white, borderRadius: '20px', padding: '28px',
+        background: T.white, borderRadius: '20px', padding: '28px',
         boxShadow: hov ? '0 16px 48px rgba(90,51,36,0.14)' : '0 4px 16px rgba(90,51,36,0.07)',
-        border: hov ? `1px solid rgba(40,199,216,0.3)` : '1px solid rgba(90,51,36,0.06)',
+        border: hov ? `1px solid rgba(40,199,216,0.3)` : `1px solid ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(90,51,36,0.06)'}`,
         transform: hov ? 'translateY(-4px)' : 'none',
         transition: 'all 0.3s ease', cursor: 'default',
         width: '100%', minWidth: 0, display: 'flex', flexDirection: 'column', height: '100%',
@@ -688,13 +735,13 @@ function MenuCard({ name, desc, price, isJain = false }: { name: string; desc: s
     >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px', marginBottom: '10px', width: '100%' }}>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h3 style={{ fontFamily: display, fontWeight: 800, fontSize: '18px', color: B.brown, lineHeight: 1.25, margin: 0, minWidth: 0, overflowWrap: 'break-word', wordBreak: 'normal' }}>{name}</h3>
+          <h3 style={{ fontFamily: display, fontWeight: 800, fontSize: '18px', color: T.brown, lineHeight: 1.25, margin: 0, minWidth: 0, overflowWrap: 'break-word', wordBreak: 'normal' }}>{name}</h3>
         </div>
-        <span style={{ fontFamily: display, fontWeight: 800, fontSize: '15px', color: B.teal, whiteSpace: 'pre-line', flexShrink: 0, marginLeft: '8px', maxWidth: '130px', textAlign: 'right', lineHeight: 1.4 }}>{price}</span>
+        <span style={{ fontFamily: display, fontWeight: 800, fontSize: '15px', color: T.teal, whiteSpace: 'pre-line', flexShrink: 0, marginLeft: '8px', maxWidth: '130px', textAlign: 'right', lineHeight: 1.4 }}>{price}</span>
       </div>
-      <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownMuted, lineHeight: 1.65, margin: 0, width: '100%', minWidth: 0, overflowWrap: 'break-word', wordBreak: 'normal' }}>{desc}</p>
+      <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: T.brownMuted, lineHeight: 1.65, margin: 0, width: '100%', minWidth: 0, overflowWrap: 'break-word', wordBreak: 'normal' }}>{desc}</p>
       <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-        <Pill bg={`rgba(139,195,74,0.15)`} color={B.green}>🌿 Pure Veg</Pill>
+        <Pill bg={isDark ? 'rgba(155,203,101,0.15)' : `rgba(139,195,74,0.15)`} color={T.green}>🌿 Pure Veg</Pill>
         {isJain && (
           <Pill bg={`rgba(232,131,74,0.12)`} color={B.orange}>JAIN</Pill>
         )}
@@ -706,6 +753,8 @@ function MenuCard({ name, desc, price, isJain = false }: { name: string; desc: s
 
 // ── Gallery strip ─────────────────────────────────────────────
 function GallerySection() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   const images = [
     { src: dish1, alt: 'Plated starter' },
     { src: dish2, alt: 'Colourful dish' },
@@ -761,12 +810,12 @@ function GallerySection() {
   }
 
   return (
-    <section id="gallery" style={{ background: B.cream, padding: '120px 0' }}>
+    <section id="gallery" style={{ background: isDark ? '#1A1612' : B.cream, padding: '120px 0' }}>
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 64px' }}>
         <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '28px' }}>
           <div>
             <SectionTag color={B.orange}>From the Kitchen</SectionTag>
-            <h2 style={{ fontFamily: display, fontWeight: 900, fontSize: '48px', color: B.brown }}>Art on the <span style={{ color: B.orange }}>plate</span>.</h2>
+            <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: '48px', color: T.brown }}>Art on the <span style={{ color: B.orange }}>plate</span>.</h2>
           </div>
           <BirdDeco size={64} opacity={0.1} color={B.orange} />
         </div>
@@ -792,7 +841,7 @@ function GallerySection() {
             style={{
               position: 'absolute', left: '0', top: '50%', transform: 'translateY(-50%)', zIndex: 30,
               width: '58px', height: '58px', borderRadius: '50%',
-              border: '1px solid rgba(78,52,46,0.15)', background: B.white, color: B.brown,
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(78,52,46,0.15)'}`, background: T.white, color: T.brown,
               boxShadow: '0 16px 34px rgba(90,51,36,0.08)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '28px', lineHeight: 1,
@@ -824,7 +873,7 @@ function GallerySection() {
                     minHeight: '310px',
                     borderRadius: '28px',
                     overflow: 'hidden',
-                    background: B.creamWarm,
+                    background: isDark ? '#2A2420' : B.creamWarm,
                     boxShadow: index === activeIndex ? '0 22px 48px rgba(78,52,46,0.12)' : '0 10px 28px rgba(78,52,46,0.08)',
                     border: '1px solid rgba(78,52,46,0.05)',
                     transform: cardStyle.transform,
@@ -857,7 +906,7 @@ function GallerySection() {
             style={{
               position: 'absolute', right: '0', top: '50%', transform: 'translateY(-50%)', zIndex: 30,
               width: '58px', height: '58px', borderRadius: '50%',
-              border: '1px solid rgba(78,52,46,0.15)', background: B.white, color: B.brown,
+              border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(78,52,46,0.15)'}`, background: T.white, color: T.brown,
               boxShadow: '0 16px 34px rgba(90,51,36,0.08)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '28px', lineHeight: 1,
@@ -879,7 +928,7 @@ function GallerySection() {
                 height: '10px',
                 borderRadius: '999px',
                 border: 'none',
-                background: index === activeIndex ? B.orange : 'rgba(78,52,46,0.18)',
+                background: index === activeIndex ? B.orange : (isDark ? 'rgba(255,255,255,0.15)' : 'rgba(78,52,46,0.18)'),
                 cursor: 'pointer',
                 transition: 'all 0.3s ease',
               }}
@@ -893,6 +942,8 @@ function GallerySection() {
 
 // ── Experience ────────────────────────────────────────────────
 function ExperienceSection() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   const exp = EXPERIENCES[0]
 
   // All 6 available ambience images in masonry order
@@ -906,19 +957,19 @@ function ExperienceSection() {
   ]
 
   return (
-    <section id="private-dining" style={{ background: B.creamWarm, padding: '120px 0' }}>
+    <section id="private-dining" style={{ background: T.creamWarm, padding: '120px 0' }}>
       <style>{`
         .experience-container { display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px; align-items: start; }
         
         .experience-text-section { display: flex; flex-direction: column; gap: 20px; }
-        .experience-card { text-align: left; padding: 28px 32px; border-radius: 24px; background: white; box-shadow: 0 12px 36px rgba(90,51,36,0.12); border-left: 4px solid ${B.teal}; }
-        .experience-card h3 { font-family: ${display}; font-weight: 800; font-size: 22px; color: ${B.teal}; margin: 0 0 14px 0; }
-        .experience-card p { font-family: ${sans}; font-size: 15px; color: ${B.brownLight}; line-height: 1.7; margin: 0 0 14px 0; }
+        .experience-card { text-align: left; padding: 28px 32px; border-radius: 24px; background: ${T.white}; box-shadow: 0 12px 36px rgba(90,51,36,0.12); border-left: 4px solid ${T.teal}; }
+        .experience-card h3 { font-family: ${display}; font-weight: 800; font-size: 22px; color: ${T.teal}; margin: 0 0 14px 0; }
+        .experience-card p { font-family: ${sans}; font-size: 15px; color: ${T.brownLight}; line-height: 1.7; margin: 0 0 14px 0; }
         .experience-card p:last-child { margin-bottom: 0; }
         .experience-pills { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
         
         .ambience-masonry { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 220px; gap: 14px; }
-        .ambience-item { position: relative; overflow: hidden; border-radius: 24px; background: ${B.creamWarm}; box-shadow: 0 14px 40px rgba(90,51,36,0.11); transition: box-shadow 0.5s ease, transform 0.5s ease; cursor: pointer; }
+        .ambience-item { position: relative; overflow: hidden; border-radius: 24px; background: ${T.creamWarm}; box-shadow: 0 14px 40px rgba(90,51,36,0.11); transition: box-shadow 0.5s ease, transform 0.5s ease; cursor: pointer; }
         .ambience-item:hover { box-shadow: 0 24px 60px rgba(90,51,36,0.16); transform: translateY(-12px); }
         .ambience-item.featured { grid-column: span 2; grid-row: span 2; }
         .ambience-item img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.6s ease-out; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; image-rendering: auto; -webkit-font-smoothing: antialiased; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
@@ -952,9 +1003,9 @@ function ExperienceSection() {
 
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 64px' }}>
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
-          <SectionTag color={B.teal}>Private Dining</SectionTag>
-          <h2 style={{ fontFamily: display, fontWeight: 900, fontSize: '48px', color: B.brown }}>
-            Extraordinary <span style={{ color: B.teal }}>spaces</span>.
+          <SectionTag color={T.teal}>Private Dining</SectionTag>
+          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: '48px', color: T.brown }}>
+            Extraordinary <span style={{ color: T.teal }}>spaces</span>.
           </h2>
         </div>
 
@@ -966,8 +1017,8 @@ function ExperienceSection() {
               <h3>{exp.title}</h3>
               <p>{exp.desc}</p>
               <div className="experience-pills">
-                <Pill bg={B.tealPale} color={B.teal}>{exp.seats}</Pill>
-                <Pill bg={B.tealPale} color={B.teal}>{exp.duration}</Pill>
+                <Pill bg={T.tealPale} color={T.teal}>{exp.seats}</Pill>
+                <Pill bg={T.tealPale} color={T.teal}>{exp.duration}</Pill>
               </div>
             </div>
           </div>
@@ -995,8 +1046,10 @@ function ExperienceSection() {
   )
 }
 
-// ── Testimonials ──────────────────────────────────────────────
+// ── Testimonials ──────────────────────────────────────────
 function TestimonialsSection() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   const [active, setActive] = useState(0)
 
   const nextTestimonial = () => setActive((current) => (current + 1) % TESTIMONIALS.length)
@@ -1008,14 +1061,16 @@ function TestimonialsSection() {
   }, [])
 
   return (
-    <section id="testimonials" style={{ background: B.cream, padding: '120px 0' }}>
+    <section id="testimonials" style={{ background: T.cream, padding: '120px 0', position: 'relative', overflow: 'hidden' }}>
+      {/* Atmospheric background overlay */}
+      <div aria-hidden="true" style={{ position: 'absolute', inset: 0, zIndex: 0, backgroundImage: `url(${restaurant2})`, backgroundSize: 'cover', backgroundPosition: 'center', opacity: isDark ? 0.03 : 0.04, pointerEvents: 'none' }} />
       <style>{`
         .testimonial-shell { max-width: 980px; margin: 0 auto; }
         .testimonial-row { display: flex; align-items: center; justify-content: center; gap: 28px; }
         .testimonial-arrow {
           width: 48px; height: 48px; border-radius: 50%;
-          border: 1px solid rgba(90,51,36,0.12); background: rgba(255,255,255,0.7);
-          color: ${B.brown}; box-shadow: 0 8px 24px rgba(90,51,36,0.08);
+          border: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(90,51,36,0.12)'}; background: ${isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.7)'};
+          color: ${T.brown}; box-shadow: 0 8px 24px rgba(90,51,36,0.08);
           display: inline-flex; align-items: center; justify-content: center;
           font-family: ${display}; font-weight: 800; font-size: 30px; line-height: 1;
           cursor: pointer; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
@@ -1056,7 +1111,7 @@ function TestimonialsSection() {
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 64px' }}>
         <div style={{ textAlign: 'center', marginBottom: '56px' }}>
           <SectionTag color={B.orange}>Guest Stories</SectionTag>
-          <h2 style={{ fontFamily: display, fontWeight: 900, fontSize: '48px', color: B.brown }}>
+          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: '48px', color: T.brown }}>
             What our <span style={{ color: B.orange }}>guests</span> say.
           </h2>
         </div>
@@ -1076,16 +1131,16 @@ function TestimonialsSection() {
               <p style={{
                 fontFamily: 'Georgia, "Times New Roman", serif',
                 fontStyle: 'italic', fontWeight: 600, fontSize: 'clamp(20px, 2.3vw, 32px)',
-                lineHeight: 1.6, letterSpacing: '0.02em', color: B.brown,
+                lineHeight: 1.6, letterSpacing: '0.02em', color: T.brown,
                 margin: '0 auto 28px', maxWidth: '700px', padding: '0 10px'
               }}>
                 "{TESTIMONIALS[active].quote}"
               </p>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', marginBottom: '36px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: B.creamWarm, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>😊</div>
+                <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: T.creamWarm, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>😊</div>
                 <div style={{ textAlign: 'left' }}>
-                  <p style={{ fontFamily: display, fontWeight: 800, fontSize: '15px', color: B.brown }}>{TESTIMONIALS[active].author}</p>
-                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: B.brownMuted }}>{TESTIMONIALS[active].role}</p>
+                  <p style={{ fontFamily: display, fontWeight: 800, fontSize: '15px', color: T.brown }}>{TESTIMONIALS[active].author}</p>
+                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: T.brownMuted }}>{TESTIMONIALS[active].role}</p>
                 </div>
               </div>
             </div>
@@ -1110,7 +1165,7 @@ function TestimonialsSection() {
                 style={{
                   width: active === i ? '28px' : '10px', height: '10px', borderRadius: '999px',
                   border: 'none', cursor: 'pointer',
-                  background: active === i ? B.teal : B.creamWarm,
+                  background: active === i ? T.teal : (isDark ? 'rgba(255,255,255,0.12)' : T.creamWarm),
                   transition: 'all 0.3s ease',
                 }}
               />
@@ -1122,29 +1177,31 @@ function TestimonialsSection() {
   )
 }
 
-// ── Reservation ───────────────────────────────────────────────
+// ── Reservation ────────────────────────────────────────────
 function ReservationSection() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   const [form, setForm] = useState({ name: '', email: '', date: '', guests: '2', occasion: '' })
   const [submitted, setSubmitted] = useState(false)
 
   const inputSt: React.CSSProperties = {
     fontFamily: sans, fontWeight: 400, fontSize: '15px',
     width: '100%', padding: '14px 18px', borderRadius: '14px',
-    border: `1.5px solid rgba(90,51,36,0.18)`, background: B.white,
-    color: B.brown, outline: 'none', transition: 'border-color 0.25s',
+    border: `1.5px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(90,51,36,0.18)'}`, background: T.white,
+    color: T.brown, outline: 'none', transition: 'border-color 0.25s',
   }
 
   return (
-    <section id="reservations" style={{ background: `linear-gradient(180deg, ${B.creamWarm} 0%, ${B.cream} 100%)`, padding: '120px 0' }}>
+    <section id="reservations" style={{ background: isDark ? `linear-gradient(180deg, #1F1C18 0%, #1A1612 100%)` : `linear-gradient(180deg, ${B.creamWarm} 0%, ${B.cream} 100%)`, padding: '120px 0' }}>
       <div className="reservation-grid" style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 64px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
 
         {/* Left */}
         <div>
-          <SectionTag color={B.teal}>Reservations</SectionTag>
-          <h2 style={{ fontFamily: display, fontWeight: 900, fontSize: '52px', lineHeight: 1.1, color: B.brown, marginBottom: '20px' }}>
-            Your table<br /><span style={{ color: B.teal }}>awaits</span>.
+          <SectionTag color={T.teal}>Reservations</SectionTag>
+          <h2 style={{ fontFamily: serif, fontWeight: 700, fontSize: '52px', lineHeight: 1.1, color: T.brown, marginBottom: '20px' }}>
+            Your table<br /><span style={{ color: T.teal }}>awaits</span>.
           </h2>
-          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', lineHeight: 1.8, color: B.brownLight, marginBottom: '40px' }}>
+          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '16px', lineHeight: 1.8, color: T.brownLight, marginBottom: '40px' }}>
             We seat guests Tuesday through Sunday, from 12 PM to 3 PM and 7 PM to 11 PM. Walk-ins welcome at the bar.
           </p>
 
@@ -1161,11 +1218,11 @@ function ReservationSection() {
                 value: '+91 80958 09571'
               },
             ].map(({ emoji, label, value }) => (
-              <div key={label} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '16px 20px', background: B.white, borderRadius: '16px', boxShadow: '0 2px 12px rgba(90,51,36,0.07)' }}>
+              <div key={label} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', padding: '16px 20px', background: T.white, borderRadius: '16px', boxShadow: '0 2px 12px rgba(90,51,36,0.07)' }}>
                 <span style={{ fontSize: '22px', flexShrink: 0 }}>{emoji}</span>
                 <div>
-                  <p style={{ fontFamily: display, fontWeight: 700, fontSize: '11px', color: B.teal, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '3px' }}>{label}</p>
-                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownLight }}>
+                  <p style={{ fontFamily: display, fontWeight: 700, fontSize: '11px', color: T.teal, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '3px' }}>{label}</p>
+                  <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: T.brownLight }}>
                     {label === 'Telephone' ? <a href="tel:+918095809571" style={{ color: 'inherit', textDecoration: 'none' }}>{value}</a> : value}
                   </p>
                 </div>
@@ -1175,48 +1232,48 @@ function ReservationSection() {
         </div>
 
         {/* Right form */}
-        <div className="reservation-panel" style={{ background: B.white, borderRadius: '28px', padding: '44px', boxShadow: '0 24px 64px rgba(90,51,36,0.12)', border: `1px solid rgba(40,199,216,0.12)` }}>
+        <div className="reservation-panel" style={{ background: T.white, borderRadius: '28px', padding: '44px', boxShadow: '0 24px 64px rgba(90,51,36,0.12)', border: `1px solid rgba(40,199,216,0.12)` }}>
           {submitted ? (
             <div style={{ textAlign: 'center', padding: '40px 0' }}>
               <div style={{ fontSize: '56px', marginBottom: '16px' }}>🐦</div>
-              <h3 style={{ fontFamily: display, fontWeight: 900, fontSize: '28px', color: B.teal, marginBottom: '12px' }}>We'll be in touch!</h3>
-              <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '15px', color: B.brownLight }}>Your reservation request has been received. Our team will confirm within 2 hours.</p>
+              <h3 style={{ fontFamily: display, fontWeight: 900, fontSize: '28px', color: T.teal, marginBottom: '12px' }}>We'll be in touch!</h3>
+              <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '15px', color: T.brownLight }}>Your reservation request has been received. Our team will confirm within 2 hours.</p>
             </div>
           ) : (
             <form onSubmit={e => { e.preventDefault(); setSubmitted(true) }}>
-              <h3 style={{ fontFamily: display, fontWeight: 900, fontSize: '22px', color: B.brown, marginBottom: '28px' }}>Book a Table</h3>
+              <h3 style={{ fontFamily: display, fontWeight: 900, fontSize: '22px', color: T.brown, marginBottom: '28px' }}>Book a Table</h3>
               <div className="reservation-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Full Name</label>
-                  <input required type="text" placeholder="Your name" style={inputSt} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} onFocus={e => { e.target.style.borderColor = B.teal }} onBlur={e => { e.target.style.borderColor = 'rgba(90,51,36,0.18)' }} />
+                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: T.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Full Name</label>
+                  <input required type="text" placeholder="Your name" style={inputSt} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} onFocus={e => { e.target.style.borderColor = T.teal }} onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(90,51,36,0.18)' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Email</label>
-                  <input required type="email" placeholder="your@email.com" style={inputSt} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} onFocus={e => { e.target.style.borderColor = B.teal }} onBlur={e => { e.target.style.borderColor = 'rgba(90,51,36,0.18)' }} />
+                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: T.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Email</label>
+                  <input required type="email" placeholder="your@email.com" style={inputSt} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} onFocus={e => { e.target.style.borderColor = T.teal }} onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(90,51,36,0.18)' }} />
                 </div>
               </div>
               <div className="reservation-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Date</label>
-                  <input required type="date" style={{ ...inputSt, colorScheme: 'light' }} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} onFocus={e => { e.target.style.borderColor = B.teal }} onBlur={e => { e.target.style.borderColor = 'rgba(90,51,36,0.18)' }} />
+                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: T.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Date</label>
+                  <input required type="date" style={{ ...inputSt, colorScheme: isDark ? 'dark' : 'light' }} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} onFocus={e => { e.target.style.borderColor = T.teal }} onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(90,51,36,0.18)' }} />
                 </div>
                 <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Guests</label>
-                  <select style={{ ...inputSt, cursor: 'pointer' }} value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} onFocus={e => { e.target.style.borderColor = B.teal }} onBlur={e => { e.target.style.borderColor = 'rgba(90,51,36,0.18)' }}>
+                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: T.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Guests</label>
+                  <select style={{ ...inputSt, cursor: 'pointer' }} value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} onFocus={e => { e.target.style.borderColor = T.teal }} onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(90,51,36,0.18)' }}>
                     {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>)}
                   </select>
                 </div>
               </div>
               <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Special Occasion (optional)</label>
-                <input type="text" placeholder="Birthday, anniversary…" style={inputSt} value={form.occasion} onChange={e => setForm({ ...form, occasion: e.target.value })} onFocus={e => { e.target.style.borderColor = B.teal }} onBlur={e => { e.target.style.borderColor = 'rgba(90,51,36,0.18)' }} />
+                <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: T.brownMuted, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Special Occasion (optional)</label>
+                <input type="text" placeholder="Birthday, anniversary…" style={inputSt} value={form.occasion} onChange={e => setForm({ ...form, occasion: e.target.value })} onFocus={e => { e.target.style.borderColor = T.teal }} onBlur={e => { e.target.style.borderColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(90,51,36,0.18)' }} />
               </div>
               <button
                 type="submit"
                 style={{
                   width: '100%', padding: '16px', borderRadius: '14px', border: 'none', cursor: 'pointer',
                   fontFamily: display, fontWeight: 800, fontSize: '15px', letterSpacing: '0.04em',
-                  background: B.teal, color: B.white,
+                  background: T.teal, color: '#FFFFFF',
                   boxShadow: '0 8px 24px rgba(40,199,216,0.35)',
                   transition: 'transform 0.2s, box-shadow 0.2s',
                 }}
@@ -1225,7 +1282,7 @@ function ReservationSection() {
               >
                 🐦 Request Reservation
               </button>
-              <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: B.brownMuted, textAlign: 'center', marginTop: '12px' }}>No payment required · Confirmed within 2 hours</p>
+              <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: T.brownMuted, textAlign: 'center', marginTop: '12px' }}>No payment required · Confirmed within 2 hours</p>
             </form>
           )}
         </div>
@@ -1234,13 +1291,15 @@ function ReservationSection() {
   )
 }
 
-// ── Location / Find Us ────────────────────────────────────────
+// ── Location / Find Us ─────────────────────────────────────────
 function LocationSection() {
+  const { isDark } = useTheme()
+  const T = isDark ? D : B
   return (
     <section
       id="location"
       style={{
-        background: `linear-gradient(180deg, ${B.cream} 0%, ${B.creamWarm} 100%)`,
+        background: isDark ? `linear-gradient(180deg, #1A1612 0%, #1F1C18 100%)` : `linear-gradient(180deg, ${B.cream} 0%, ${B.creamWarm} 100%)`,
         padding: '120px 0',
         position: 'relative',
         overflow: 'hidden',
@@ -1278,21 +1337,21 @@ function LocationSection() {
           color: ${B.gold};
         }
         .loc-heading {
-          font-family: ${display};
-          font-weight: 900;
+          font-family: ${serif};
+          font-weight: 700;
           font-size: 52px;
-          color: ${B.brown};
+          color: ${T.brown};
           margin: 0 0 12px;
           line-height: 1.1;
         }
         .loc-heading span {
-          color: ${B.teal};
+          color: ${T.teal};
         }
         .loc-subtitle {
           font-family: ${sans};
           font-weight: 400;
           font-size: 16px;
-          color: ${B.brownLight};
+          color: ${T.brownLight};
           margin: 0;
         }
         .loc-map-wrapper {
@@ -1303,7 +1362,7 @@ function LocationSection() {
           position: relative;
           width: 100%;
           aspect-ratio: 16 / 7;
-          background: ${B.creamWarm};
+          background: ${T.creamWarm};
         }
         .loc-map-wrapper iframe {
           width: 100%;
@@ -1345,14 +1404,14 @@ function LocationSection() {
           align-items: center;
           gap: 8px;
           padding: 10px 20px;
-          background: ${B.white};
+          background: ${T.white};
           border-radius: 999px;
-          border: 1px solid rgba(78,52,46,0.1);
+          border: 1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(78,52,46,0.1)'};
           box-shadow: 0 4px 14px rgba(78,52,46,0.07);
           font-family: ${sans};
           font-weight: 400;
           font-size: 14px;
-          color: ${B.brownLight};
+          color: ${T.brownLight};
         }
         @media (max-width: 760px) {
           .loc-container { padding: 0 24px; }
@@ -1416,10 +1475,11 @@ function LocationSection() {
   )
 }
 
-// ── Footer ────────────────────────────────────────────────────
+// ── Footer ──────────────────────────────────────────────
 function Footer() {
+  const { isDark } = useTheme()
   return (
-    <footer id="contact" style={{ background: B.brown, position: 'relative', overflow: 'hidden' }}>
+    <footer id="contact" style={{ background: isDark ? '#0E0C0A' : B.brown, position: 'relative', overflow: 'hidden' }}>
       {/* Deco bird top right */}
       <div style={{ position: 'absolute', top: '32px', right: '48px', pointerEvents: 'none' }}><BirdDeco size={80} opacity={0.08} color={B.creamWarm} /></div>
 
@@ -1478,18 +1538,30 @@ function Footer() {
             ))}
           </div>
         </div>
-
-
-
       </div>
     </footer>
   )
 }
 
-// ── App ───────────────────────────────────────────────────────
+// ── App ───────────────────────────────────────────────
 export default function App() {
   const [scrolled, setScrolled] = useState(false)
 
+  // ── Dark mode state ────────────────────────────────────────
+  const [isDark, setIsDark] = useState(() => {
+    const stored = localStorage.getItem('pankhii-theme')
+    if (stored) return stored === 'dark'
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
+
+  const toggleTheme = () => setIsDark(prev => !prev)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light')
+    localStorage.setItem('pankhii-theme', isDark ? 'dark' : 'light')
+  }, [isDark])
+
+  // ── Scroll detection ──────────────────────────────────────
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 60)
     window.addEventListener('scroll', fn, { passive: true })
@@ -1497,7 +1569,7 @@ export default function App() {
   }, [])
 
   return (
-    <div style={{ fontFamily: sans }}>
+    <ThemeContext.Provider value={{ isDark, toggle: toggleTheme }}>
       <style>{`
         html, body { overflow-x: hidden; }
         #app { min-width: 0; }
@@ -1674,7 +1746,7 @@ export default function App() {
             line-height: 1.25 !important;
             font-weight: 700 !important;
             margin: 0 !important;
-            color: #4f3022 !important;
+            color: ${isDark ? D.brown : '#4f3022'} !important;
             letter-spacing: -0.01em !important;
             max-width: 100% !important;
           }
@@ -1749,7 +1821,7 @@ export default function App() {
           footer .footer-bottom a { white-space: normal !important; }
         }
       `}</style>
-      <Navbar scrolled={scrolled} />
+      <Navbar scrolled={scrolled} isDark={isDark} onToggle={toggleTheme} />
       <Hero />
       <StatsSection />
       <AboutSection />
@@ -1761,7 +1833,7 @@ export default function App() {
       <LocationSection />
       <Contact />
       <Footer />
-    </div>
+    </ThemeContext.Provider>
   )
 }
 

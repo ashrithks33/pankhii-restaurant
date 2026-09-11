@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React from 'react'
 
 const CONTACT_INFO = [
   {
@@ -40,20 +40,11 @@ function SectionTag({ children, color = B.teal }: { children: React.ReactNode; c
 }
 
 export default function Reservation() {
-  const [form, setForm] = useState({ name: '', email: '', date: '', guests: '2', occasion: '' })
-  const [submitted, setSubmitted] = useState(false)
-
-  const inputSt: React.CSSProperties = {
-    fontFamily: sans, fontWeight: 400, fontSize: '15px',
-    width: '100%', padding: '14px 18px', borderRadius: '14px',
-    border: `1.5px solid rgba(78,52,46,0.18)`, background: B.white,
-    color: B.brown, outline: 'none', transition: 'border-color 0.25s',
-  }
-
   return (
     <section id="reservations" style={{ background: `linear-gradient(180deg, ${B.creamWarm} 0%, ${B.cream} 100%)`, padding: '120px 0' }}>
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 64px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'start' }}>
 
+        {/* Left — unchanged */}
         <div>
           <SectionTag color={B.teal}>Reservations</SectionTag>
           <h2 style={{ fontFamily: display, fontWeight: 900, fontSize: '52px', lineHeight: 1.1, color: B.brown, marginBottom: '20px' }}>
@@ -70,7 +61,9 @@ export default function Reservation() {
                 <div>
                   <p style={{ fontFamily: display, fontWeight: 700, fontSize: '11px', color: B.teal, textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '6px' }}>{item.title}</p>
                   <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '14px', color: B.brownLight, margin: 0 }}>
-                    {item.title === 'TELEPHONE' ? <a href="tel:+918095809571" style={{ color: 'inherit', textDecoration: 'none' }}>{item.value}</a> : item.value}
+                    {item.title === 'TELEPHONE'
+                      ? <a href="tel:+918095809571" style={{ color: 'inherit', textDecoration: 'none' }}>{item.value}</a>
+                      : item.value}
                   </p>
                 </div>
               </div>
@@ -78,60 +71,43 @@ export default function Reservation() {
           </div>
         </div>
 
+        {/* Right — phone CTA card */}
         <div style={{ background: B.white, borderRadius: '28px', padding: '44px', boxShadow: '0 24px 64px rgba(78,52,46,0.12)', border: `1px solid rgba(40,199,216,0.12)` }}>
-          {submitted ? (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <div style={{ fontSize: '56px', marginBottom: '16px' }}>🐦</div>
-              <h3 style={{ fontFamily: display, fontWeight: 900, fontSize: '28px', color: B.teal, marginBottom: '12px' }}>We'll be in touch!</h3>
-              <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '15px', color: B.brownLight }}>Your reservation request has been received. Our team will confirm within 2 hours.</p>
-            </div>
-          ) : (
-            <form onSubmit={e => { e.preventDefault(); setSubmitted(true) }}>
-              <h3 style={{ fontFamily: display, fontWeight: 900, fontSize: '22px', color: B.brown, marginBottom: '28px' }}>Book a Table</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownLight, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Full Name</label>
-                  <input required type="text" placeholder="Your name" style={inputSt} value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} onFocus={e => { e.currentTarget.style.borderColor = B.teal }} onBlur={e => { e.currentTarget.style.borderColor = 'rgba(78,52,46,0.18)' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownLight, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Email</label>
-                  <input required type="email" placeholder="your@email.com" style={inputSt} value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} onFocus={e => { e.currentTarget.style.borderColor = B.teal }} onBlur={e => { e.currentTarget.style.borderColor = 'rgba(78,52,46,0.18)' }} />
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownLight, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Date</label>
-                  <input required type="date" style={{ ...inputSt, colorScheme: 'light' }} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} onFocus={e => { e.currentTarget.style.borderColor = B.teal }} onBlur={e => { e.currentTarget.style.borderColor = 'rgba(78,52,46,0.18)' }} />
-                </div>
-                <div>
-                  <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownLight, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Guests</label>
-                  <select style={{ ...inputSt, cursor: 'pointer' }} value={form.guests} onChange={e => setForm({ ...form, guests: e.target.value })} onFocus={e => { e.currentTarget.style.borderColor = B.teal }} onBlur={e => { e.currentTarget.style.borderColor = 'rgba(78,52,46,0.18)' }}>
-                    {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <option key={n} value={n}>{n} {n === 1 ? 'Guest' : 'Guests'}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{ display: 'block', fontFamily: display, fontWeight: 700, fontSize: '12px', color: B.brownLight, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Special Occasion (optional)</label>
-                <input type="text" placeholder="Birthday, anniversary…" style={inputSt} value={form.occasion} onChange={e => setForm({ ...form, occasion: e.target.value })} onFocus={e => { e.currentTarget.style.borderColor = B.teal }} onBlur={e => { e.currentTarget.style.borderColor = 'rgba(78,52,46,0.18)' }} />
-              </div>
-              <button
-                type="submit"
-                style={{
-                  width: '100%', padding: '16px', borderRadius: '14px', border: 'none', cursor: 'pointer',
-                  fontFamily: display, fontWeight: 800, fontSize: '15px', letterSpacing: '0.04em',
-                  background: B.teal, color: B.white,
-                  boxShadow: '0 8px 24px rgba(40,199,216,0.35)',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 12px 32px rgba(40,199,216,0.45)' }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(40,199,216,0.35)' }}
-              >
-                🐦 Request Reservation
-              </button>
-              <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '12px', color: B.brownLight, textAlign: 'center', marginTop: '12px' }}>No payment required · Confirmed within 2 hours</p>
-            </form>
-          )}
+          <h3 style={{ fontFamily: display, fontWeight: 900, fontSize: '28px', color: B.brown, marginBottom: '16px', lineHeight: 1.2 }}>
+            Reserve by Phone
+          </h3>
+          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '15px', lineHeight: 1.8, color: B.brownLight, marginBottom: '36px' }}>
+            Call us directly to check table availability and reserve your table. Our team will be happy to assist you.
+          </p>
+
+          <a
+            href="tel:+918095809571"
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              width: '100%', padding: '18px', borderRadius: '14px',
+              background: B.teal, color: B.white, textDecoration: 'none',
+              fontFamily: display, fontWeight: 800, fontSize: '17px', letterSpacing: '0.04em',
+              boxShadow: '0 8px 24px rgba(40,199,216,0.35)',
+              transition: 'transform 0.2s, box-shadow 0.2s',
+              boxSizing: 'border-box',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 12px 32px rgba(40,199,216,0.45)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'none'; (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 8px 24px rgba(40,199,216,0.35)' }}
+          >
+            📞 Call to Reserve
+          </a>
+
+          <p style={{ fontFamily: display, fontWeight: 800, fontSize: '18px', color: B.brown, textAlign: 'center', marginTop: '20px', marginBottom: '8px' }}>
+            +91 80958 09571
+          </p>
+          <p style={{ fontFamily: sans, fontWeight: 400, fontSize: '13px', color: B.brownMuted, textAlign: 'center', marginBottom: '16px' }}>
+            Tuesday–Sunday · 12 PM–3 PM &amp; 7 PM–11 PM
+          </p>
+          <p style={{ fontFamily: sans, fontStyle: 'italic', fontWeight: 400, fontSize: '13px', color: B.brownMuted, textAlign: 'center', margin: 0 }}>
+            We'll help you find the perfect table.
+          </p>
         </div>
+
       </div>
     </section>
   )

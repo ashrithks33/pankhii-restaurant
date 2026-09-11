@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap');
 @import 'tailwindcss';
 
 @theme {
@@ -10,10 +10,10 @@
   --color-cream-deep: #F0D080;
   --color-brown: #5A3324;
   --color-brown-light: #7A4A34;
-  --color-brown-muted: rgba(90,51,36,0.55);
+  --color-brown-muted: rgba(90, 51, 36, 0.55);
   --color-teal: #28C7D8;
   --color-teal-light: #5DD8E6;
-  --color-teal-pale: rgba(40,199,216,0.12);
+  --color-teal-pale: rgba(40, 199, 216, 0.12);
   --color-green: #8BC34A;
   --color-green-dark: #6A9E32;
   --color-orange: #E8834A;
@@ -21,18 +21,113 @@
   --color-white: #ffffff;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
+
+html {
+  scroll-behavior: smooth;
+  transition: background-color 0.3s ease;
+}
 
 body {
   font-family: var(--font-sans);
   background-color: #FDF6E3;
   color: #5A3324;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #F7E0A3; }
-::-webkit-scrollbar-thumb { background: rgba(90,51,36,0.3); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(90,51,36,0.55); }
+/* ── Dark mode body override ───────────────────────────────── */
+html[data-theme="dark"] body {
+  background-color: #1A1612;
+  color: #F5EDD8;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F7E0A3;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(90, 51, 36, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(90, 51, 36, 0.55);
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #231F1B;
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: rgba(200, 160, 100, 0.3);
+}
+
+html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 160, 100, 0.5);
+}
+
+/* ── Dark mode toggle button ───────────────────────────────── */
+.dm-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(90, 51, 36, 0.18);
+  background: rgba(253, 246, 227, 0.7);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  line-height: 1;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.dm-toggle:hover {
+  background: rgba(253, 246, 227, 0.95);
+  border-color: rgba(40, 199, 216, 0.4);
+  transform: scale(1.08);
+}
+
+html[data-theme="dark"] .dm-toggle {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+html[data-theme="dark"] .dm-toggle:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(40, 199, 216, 0.5);
+}
+
+/* ── Global element transition for dark mode switching ─────── */
+section,
+footer,
+nav,
+div,
+a,
+button,
+input,
+select,
+textarea,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+li {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}

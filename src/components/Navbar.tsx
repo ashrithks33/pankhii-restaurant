@@ -1,23 +1,19 @@
-import { useState } from "react";
+import { useState, type ReactNode } from 'react'
 import logoImg from '@/imports/Screenshot_2026-08-05_092225.png'
 
 const B = {
-  cream: '#FDF6E3',
-  creamWarm: '#F7E0A3',
-  creamDeep: '#F0D080',
-  yellow: '#F5C842',
-  brown: '#5A3324',
-  brownLight: '#7A4A34',
-  brownMuted: 'rgba(90,51,36,0.5)',
+  cream: '#FFF9F2',
+  creamWarm: '#F8EEDB',
+  green: '#0F3D2E',
+  greenLight: '#1C5C46',
+  brown: '#4E342E',
+  brownLight: '#7A5C4F',
+  white: '#FFFFFF',
   teal: '#28C7D8',
-  tealPale: 'rgba(40,199,216,0.14)',
-  green: '#8BC34A',
-  greenDark: '#6A9E32',
-  orange: '#E8834A',
-  white: '#ffffff',
 }
 
 const display = "'Nunito', system-ui, sans-serif"
+const sans = "'Inter', system-ui, sans-serif"
 
 const NAV_LINKS = [
   { label: 'Home', href: '#home' },
@@ -27,129 +23,224 @@ const NAV_LINKS = [
   { label: 'Reservation', href: '#reservations' },
   { label: 'Contact', href: '#contact' },
 ]
-export default function Navbar({ scrolled }: { scrolled: boolean }) {
-  const [active, setActive]   = useState('Home')
-  const [btnHover, setBtnHover] = useState(false)
+
+// ── Props ──────────────────────────────────────────────────────
+interface NavbarProps {
+  scrolled: boolean
+  isDark?: boolean
+  onToggle?: () => void
+}
+
+// ── Theme Toggle Button ────────────────────────────────────────
+function ThemeToggle({ isDark = false, onToggle }: { isDark?: boolean; onToggle?: () => void }) {
+  return (
+    <button
+      className="dm-toggle"
+      onClick={onToggle}
+      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+      title={isDark ? 'Light mode' : 'Dark mode'}
+    >
+      {isDark ? '☀️' : '🌙'}
+    </button>
+  )
+}
+
+// ── Navbar ─────────────────────────────────────────────────────
+export default function Navbar({ scrolled, isDark = false, onToggle }: NavbarProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hovLink, setHovLink] = useState<string | null>(null)
+
+  const navBg = scrolled
+    ? isDark
+      ? 'rgba(20,17,14,0.97)'
+      : `rgba(255,249,242,0.97)`
+    : isDark
+      ? 'rgba(26,22,18,0.80)'
+      : `rgba(255,249,242,0.92)`
+
+  const borderColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(78,52,46,0.08)'
+  const logoFilter = isDark ? 'brightness(0.92) saturate(0.9)' : 'none'
 
   return (
-    <nav style={{
-      position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      background: scrolled ? 'rgba(253,246,227,0.88)' : 'transparent',
-      backdropFilter: scrolled ? 'blur(18px)' : 'none',
-      WebkitBackdropFilter: scrolled ? 'blur(18px)' : 'none',
-      borderBottom: scrolled ? `1px solid rgba(90,51,36,0.1)` : 'none',
-      boxShadow: scrolled ? '0 4px 24px rgba(90,51,36,0.07)' : 'none',
-      transition: 'all 0.4s ease',
-    }}>
+    <nav
+      className="navbar-outer"
+      role="navigation"
+      aria-label="Main navigation"
+      style={{
+        position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
+        backdropFilter: 'blur(14px)',
+        WebkitBackdropFilter: 'blur(14px)',
+        background: navBg,
+        borderBottom: `1px solid ${borderColor}`,
+        transition: 'background 0.35s ease, border-color 0.35s ease',
+      }}
+    >
       <style>{`
-        .navbar-inner { display: flex; align-items: center; justify-content: flex-start; max-width: 1440px; margin: 0 auto; padding: 0 64px; height: 76px; }
-        .navbar-menu-button { display: none; width: 44px; height: 44px; border: none; background: transparent; cursor: pointer; border-radius: 999px; align-items: center; justify-content: center; color: ${B.brown}; transition: background 0.2s ease; }
-        .navbar-menu-button:hover { background: rgba(90,51,36,0.06); }
-        .navbar-links { display: flex; align-items: center; gap: 30px; list-style: none; margin: 0; padding: 0; margin-left: 32px; }
-        .navbar-cta { margin-left: auto; white-space: nowrap; display: inline-block; }
-        .mobile-nav-panel { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(253,246,227,0.96); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border-bottom-left-radius: 18px; border-bottom-right-radius: 18px; padding: 18px 18px 22px; box-shadow: 0 24px 60px rgba(90,51,36,0.12); flex-direction: column; gap: 12px; }
-        .mobile-nav-link { display: block; width: 100%; font-family: ${display}; font-weight: 700; font-size: 15px; letter-spacing: 0.02em; color: ${B.brown}; text-decoration: none; padding: 12px 14px; border-radius: 14px; transition: background 0.2s, color 0.2s; }
-        .mobile-nav-link:hover { background: rgba(40,199,216,0.1); color: ${B.teal}; }
-        .mobile-nav-cta { display: block; width: 100%; text-align: center; font-family: ${display}; font-weight: 800; font-size: 14px; letter-spacing: 0.04em; text-decoration: none; padding: 14px 0; border-radius: 999px; background: ${B.teal}; color: ${B.white}; border: 2px solid ${B.teal}; }
+        .navbar-inner {
+          max-width: 1440px; margin: 0 auto; padding: 0 48px;
+          height: 76px; display: flex; align-items: center; justify-content: space-between; gap: 32px;
+        }
+        .navbar-links {
+          display: flex; align-items: center; gap: 0; list-style: none; margin: 0; padding: 0;
+        }
+        .navbar-link {
+          font-family: ${display}; font-weight: 700; font-size: 14px;
+          letter-spacing: 0.04em; text-decoration: none;
+          padding: 8px 14px; border-radius: 10px;
+          transition: color 0.2s, background 0.2s;
+          color: ${isDark ? 'rgba(245,237,216,0.78)' : B.brownLight};
+          position: relative;
+        }
+        .navbar-link:hover {
+          color: ${isDark ? '#F5EDD8' : B.brown};
+          background: ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(78,52,46,0.06)'};
+        }
+        .navbar-link.active {
+          color: ${isDark ? B.teal : B.green};
+        }
+        .navbar-cta {
+          font-family: ${display}; font-weight: 800; font-size: 14px;
+          letter-spacing: 0.06em; padding: 10px 24px; border-radius: 999px;
+          background: ${B.teal}; color: #FFFFFF; text-decoration: none;
+          box-shadow: 0 6px 20px rgba(40,199,216,0.3);
+          transition: transform 0.22s ease, box-shadow 0.22s ease;
+          white-space: nowrap;
+        }
+        .navbar-cta:hover {
+          transform: translateY(-1px); box-shadow: 0 10px 28px rgba(40,199,216,0.42);
+        }
+        .navbar-menu-button {
+          display: none; width: 42px; height: 42px; border-radius: 12px;
+          border: 1.5px solid ${isDark ? 'rgba(255,255,255,0.15)' : 'rgba(78,52,46,0.15)'};
+          background: transparent; cursor: pointer;
+          align-items: center; justify-content: center; flex-direction: column; gap: 5px;
+          padding: 0;
+        }
+        .navbar-hamburger-bar {
+          width: 20px; height: 2px; border-radius: 1px;
+          background: ${isDark ? 'rgba(245,237,216,0.88)' : B.brown};
+          transition: all 0.25s ease;
+        }
+        .navbar-menu-button.open .navbar-hamburger-bar:nth-child(1) {
+          transform: translateY(7px) rotate(45deg);
+        }
+        .navbar-menu-button.open .navbar-hamburger-bar:nth-child(2) {
+          opacity: 0;
+        }
+        .navbar-menu-button.open .navbar-hamburger-bar:nth-child(3) {
+          transform: translateY(-7px) rotate(-45deg);
+        }
+        .navbar-mobile-menu {
+          display: none; position: absolute; top: 76px; left: 0; right: 0;
+          background: ${isDark ? 'rgba(20,17,14,0.98)' : 'rgba(255,249,242,0.98)'};
+          backdropFilter: blur(16px);
+          border-bottom: 1px solid ${borderColor};
+          padding: 20px 24px 28px; flex-direction: column; gap: 6px;
+        }
+        .navbar-mobile-menu.open { display: flex; }
+        .navbar-mobile-link {
+          font-family: ${display}; font-weight: 700; font-size: 15px;
+          text-decoration: none; padding: 10px 14px; border-radius: 10px;
+          color: ${isDark ? 'rgba(245,237,216,0.88)' : B.brownLight};
+          transition: color 0.2s, background 0.2s;
+        }
+        .navbar-mobile-link:hover {
+          color: ${isDark ? '#F5EDD8' : B.brown};
+          background: ${isDark ? 'rgba(255,255,255,0.07)' : 'rgba(78,52,46,0.06)'};
+        }
+        .navbar-mobile-cta {
+          margin-top: 8px; display: inline-flex; align-items: center; justify-content: center;
+          padding: 12px 24px; border-radius: 999px;
+          background: ${B.teal}; color: #FFFFFF; text-decoration: none;
+          font-family: ${display}; font-weight: 800; font-size: 14px;
+          box-shadow: 0 6px 20px rgba(40,199,216,0.3);
+        }
+        @media (max-width: 960px) {
+          .navbar-inner { padding: 0 24px; gap: 12px; }
+        }
         @media (max-width: 760px) {
-          .navbar-inner { padding: 0 20px !important; height: 66px !important; }
           .navbar-links, .navbar-cta { display: none !important; }
           .navbar-menu-button { display: inline-flex !important; }
-          .mobile-nav-panel { display: ${menuOpen ? 'flex' : 'none'} !important; }
         }
         @media (max-width: 520px) {
-          .navbar-inner { padding: 0 16px !important; }
-          .navbar-menu-button { width: 40px; height: 40px; }
+          .navbar-inner { padding: 0 16px; height: 66px; }
         }
       `}</style>
-      <div className="navbar-inner">
 
+      <div className="navbar-inner">
         {/* Logo */}
-        <a href="#home" style={{ display: 'block', flexShrink: 0, textDecoration: 'none' }}>
+        <a href="#home" aria-label="Pankhii home" style={{ height: '48px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
           <img
             src={logoImg}
-            alt="Pankhii Veg Restaurant"
-            style={{ width: '128px', height: '56px', objectFit: 'contain', display: 'block' }}
+            alt="Pankhii restaurant logo"
+            style={{ height: '48px', width: 'auto', objectFit: 'contain', display: 'block', filter: logoFilter }}
           />
         </a>
 
-        {/* Links */}
-        <ul className="navbar-links" style={{ display: 'flex', alignItems: 'center', gap: '32px', listStyle: 'none', margin: 0, padding: 0 }}>
-          {NAV_LINKS.map(({ label, href }) => {
-            const isActive = active === label
-            return (
-              <li key={label}>
-                <a
-                  href={href}
-                  onClick={() => setActive(label)}
-                  style={{
-                    fontFamily: display, fontWeight: 700, fontSize: '14px',
-                    textDecoration: 'none', letterSpacing: '0.02em',
-                    color: isActive ? B.teal : B.brownLight,
-                    borderBottom: isActive ? `2px solid ${B.teal}` : '2px solid transparent',
-                    paddingBottom: '3px',
-                    transition: 'color 0.25s, border-color 0.25s',
-                  }}
-                  onMouseEnter={e => { if (!isActive) { e.currentTarget.style.color = B.teal } }}
-                  onMouseLeave={e => { if (!isActive) { e.currentTarget.style.color = B.brownLight } }}
-                >
-                  {label}
-                </a>
-              </li>
-            )
-          })}
+        {/* Desktop nav links */}
+        <ul className="navbar-links" role="list">
+          {NAV_LINKS.map(link => (
+            <li key={link.label}>
+              <a
+                href={link.href}
+                className={`navbar-link${hovLink === link.label ? ' hover' : ''}`}
+                onMouseEnter={() => setHovLink(link.label)}
+                onMouseLeave={() => setHovLink(null)}
+              >
+                {link.label}
+              </a>
+            </li>
+          ))}
         </ul>
 
-        {/* CTA */}
-        <a
-          className="navbar-cta"
-          href="#reservations"
-          onMouseEnter={() => setBtnHover(true)}
-          onMouseLeave={() => setBtnHover(false)}
-          style={{
-            fontFamily: display, fontWeight: 800, fontSize: '13px', letterSpacing: '0.04em',
-            textDecoration: 'none', padding: '11px 24px', borderRadius: '999px',
-            background: btnHover ? B.teal : 'transparent',
-            color: btnHover ? B.white : B.teal,
-            border: `2px solid ${B.teal}`,
-            transition: 'all 0.25s ease',
-            whiteSpace: 'nowrap',
-            display: 'inline-block',
-          }}
-        >
-          Reserve Table
-        </a>
+        {/* Right controls */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
+          {/* Dark mode toggle — desktop */}
+          <ThemeToggle isDark={isDark} onToggle={onToggle} />
 
-        <button
-          type="button"
-          className="navbar-menu-button"
-          aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(open => !open)}
-          style={{ display: 'none' }}
-        >
-          <span style={{ fontSize: '24px', lineHeight: 1 }}>{menuOpen ? '✕' : '☰'}</span>
-        </button>
+          {/* Reserve CTA */}
+          <a href="tel:+918095809571" className="navbar-cta" aria-label="Call to reserve a table">
+            📞 Reserve
+          </a>
+
+          {/* Hamburger — mobile */}
+          <button
+            className={`navbar-menu-button${menuOpen ? ' open' : ''}`}
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            onClick={() => setMenuOpen(o => !o)}
+          >
+            <span className="navbar-hamburger-bar" />
+            <span className="navbar-hamburger-bar" />
+            <span className="navbar-hamburger-bar" />
+          </button>
+        </div>
       </div>
 
-      <div className="mobile-nav-panel" aria-hidden={!menuOpen}>
-        {NAV_LINKS.map(({ label, href }) => (
+      {/* Mobile menu */}
+      <div className={`navbar-mobile-menu${menuOpen ? ' open' : ''}`} role="menu">
+        {NAV_LINKS.map(link => (
           <a
-            key={label}
-            href={href}
-            onClick={() => { setMenuOpen(false); setActive(label); }}
-            className="mobile-nav-link"
+            key={link.label}
+            href={link.href}
+            className="navbar-mobile-link"
+            role="menuitem"
+            onClick={() => setMenuOpen(false)}
           >
-            {label}
+            {link.label}
           </a>
         ))}
-        <a
-          href="#reservations"
-          onClick={() => setMenuOpen(false)}
-          className="mobile-nav-cta"
-        >
-          Reserve Table
+
+        {/* Dark mode toggle — mobile */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '4px 14px' }}>
+          <ThemeToggle isDark={isDark} onToggle={onToggle} />
+          <span style={{ fontFamily: sans, fontSize: '14px', color: isDark ? 'rgba(245,237,216,0.7)' : B.brownLight }}>
+            {isDark ? 'Light mode' : 'Dark mode'}
+          </span>
+        </div>
+
+        <a href="tel:+918095809571" className="navbar-mobile-cta" onClick={() => setMenuOpen(false)}>
+          📞 Call to Reserve
         </a>
       </div>
     </nav>
